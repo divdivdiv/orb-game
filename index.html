@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orb Stabilization</title>
+    <style>
+        body {
+            font-family: monospace;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #121212;
+            color: #e0e0e0;
+            line-height: 1.6;
+        }
+        #game-output {
+            background-color: #1e1e1e;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        #command-input {
+            width: 100%;
+            padding: 10px;
+            background-color: #2c2c2c;
+            border: 1px solid #444;
+            color: #e0e0e0;
+            margin-bottom: 10px;
+        }
+        #submit-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: #3c3c3c;
+            color: #e0e0e0;
+            border: none;
+            cursor: pointer;
+        }
+        #submit-btn:hover {
+            background-color: #4c4c4c;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-output"></div>
+    <input type="text" id="command-input" placeholder="What do you do?">
+    <button id="submit-btn">Submit Command</button>
+
+    <script>
+        class OrbStabilizationGame {
+            constructor() {
+                this.gameOver = false;
+                this.concentration = 100;
+                this.orbEnergy = 50;
+                this.phoneRinging = true;
+                this.sunSetting = true;
+                this.mouthDry = false;
+                this.movements = [];
+                this.currentMoves = [
+                    "left", "forward", "left", "back", "right", "forward", 
+                    "left", "back", "forward", "right", "back", "left", 
+                    "back", "forward", "right", "back", "left", "back", 
+                    "forward"
+                ];
+            }
+
+            output(message) {
+                const gameOutput = document.getElementById('game-output');
+                gameOutput.innerHTML += `<p>${message}</p>`;
+                gameOutput.scrollTop = gameOutput.scrollHeight;
+            }
+
+            gameIntro() {
+                this.output(`
+ORBS STABILIZATION
+
+You're crouched down, half-hunched, ass sticking out, 
+eyeballing this fucking orb up close. 
+Every atom of your concentration is focused on stabilization.
+
+The phone is ringing. The sun is going down. 
+Your mouth is getting dry.
+
+But none of that matters. 
+Only the orb matters.
+
+Type 'help' for commands.
+                `);
+            }
+
+            parseCommand(command) {
+                const words = command.toLowerCase().split(' ');
+                const action = words[0];
+
+                switch(action) {
+                    case 'help':
+                        this.showHelp();
+                        break;
+                    case 'stabilize':
+                    case 'control':
+                        this.stabilizeOrb();
+                        break;
+                    case 'tilt':
+                    case 'move':
+                        this.tiltOrb(words[1]);
+                        break;
+                    case 'look':
+                        this.describeOrb();
+                        break;
+                    case 'ignore':
+                        this.ignoreDistractions();
+                        break;
+                    case 'quit':
+                        this.gameOver = true;
+                        this.output("You've given up. The wreckage awaits.");
+                        break;
+                    default:
+                        this.output("Stay focused. This isn't the time for fucking around.");
+                }
+            }
+
+            showHelp() {
+                this.output(`
+COMMANDS:
+- stabilize: Focus on controlling the orb
+- tilt [direction]: Carefully move the orb 
+- look: Examine the orb's energy
+- ignore: Deal with distractions
+- quit: Abandon everything
+                `);
+            }
+
+            describeOrb() {
+                this.output(`
+You're looking into the inside of the orb.
+The energy at the centre is going a little pink.
+That's a bad sign.
+
+The energy is spiking - which happens right before the crackling starts.
+A reminder that right here is exactly where you need to be.
+
+Stabilizing.
+                `);
+            }
+
+            ignoreDistractions() {
+                if (this.phoneRinging) {
+                    this.output("The phone keeps ringing. You can't answer it.");
+                    this.phoneRinging = false;
+                } else if (this.sunSetting) {
+                    this.output("The sun continues to go down. You don't care.");
+                    this.sunSetting = false;
+                } else if (!this.mouthDry) {
+                    this.output("Your mouth is getting dry. Fuck it.");
+                    this.mouthDry = true;
+                } else {
+                    this.output("Nothing left to ignore. Just the orb.");
+                }
+            }
+
+            stabilizeOrb() {
+                if (this.currentMoves.length === 0) {
+                    this.output(`
+You've lost control. 
+The orb is pulsing. A capillary bursts.
+Everything goes to absolute fucking bull shit.
+                    `);
+                    this.gameOver = true;
+                    return;
+                }
+
+                const currentMove = this.currentMoves.shift();
+                this.movements.push(currentMove);
+
+                this.output(`You tilt the orb ${currentMove}...`);
+                
+                if (Math.random() < 0.3) {
+                    this.output(`
+A random event threatens everything.
+You can see the potential wreckage.
+Your own lounge room, overwhelmed.
+Unable to clean the dishes, sweep up the debris.
+Nothing familiar.
+                    `);
+                    this.gameOver = true;
+                    return;
+                }
+
+                if (this.currentMoves.length < 5) {
+                    this.output(`
+The orb's energy is becoming critical.
+Concentration at its absolute limit.
+Every fucking atom focused.
+                    `);
+                }
+
+                if (this.currentMoves.length === 0) {
+                    this.output(`
+SUCCESS.
+The orb is stabilized.
+You've prevented the catastrophe.
+                    `);
+                    this.gameOver = true;
+                }
+            }
+
+            tiltOrb(direction) {
+                if (!direction) {
+                    this.output("Specify a direction. Left? Right? Forward? Back?");
+                    return;
+                }
+
+                if (!['left', 'right', 'forward', 'back'].includes(direction)) {
+                    this.output("Invalid direction. Stay focused!");
+                    return;
+                }
+
+                this.output(`
+You're tilting the orb ${direction}.
+Getting down on your haunches.
+Forearms underneath.
+Trying to chill it out.
+                `);
+            }
+
+            play() {
+                this.gameIntro();
+            }
+        }
+
+        // Game initialization
+        const game = new OrbStabilizationGame();
+        game.play();
+
+        // Event listeners
+        document.getElementById('submit-btn').addEventListener('click', () => {
+            const commandInput = document.getElementById('command-input');
+            const command = commandInput.value.trim();
+            
+            if (command) {
+                game.output(`> ${command}`);
+                game.parseCommand(command);
+                commandInput.value = '';
+            }
+        });
+
+        document.getElementById('command-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const command = e.target.value.trim();
+                
+                if (command) {
+                    game.output(`> ${command}`);
+                    game.parseCommand(command);
+                    e.target.value = '';
+                }
+            }
+        });
+    </script>
+</body>
+</html>
